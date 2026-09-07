@@ -198,6 +198,60 @@
     titleEl.insertAdjacentElement("afterend", btn);
   }
 
+  function isPullsListPage() {
+    return /^\/[^/]+\/[^/]+\/pulls\/?$/.test(location.pathname);
+  }
+
+  async function copyFromRow(link, btn) {
+    const title = link.textContent.trim();
+    const num = link.getAttribute("href")?.match(/\/pull\/(\d+)/)?.[1];
+    if (!title || !num) {
+      showToast("Couldn't read this row");
+      return;
+    }
+    const url = new URL(link.getAttribute("href"), location.origin).href;
+    const text = `${title} (#${num})`;
+    const html = `<a href="${escHtml(url)}">${escHtml(text)}</a>`;
+    const markdown = `[${text.replace(/([[\]])/g, "\\$1")}](${url})`;
+    if (await writeClipboard(html, markdown)) {
+      showToast(`Copied: ${text}`);
+      btn.innerHTML = CHECK_ICON;
+      btn.classList.add("ghlc-copied");
+      setTimeout(() => {
+        btn.innerHTML = LINK_ICON;
+        btn.classList.remove("ghlc-copied");
+      }, 1500);
+    } else {
+      showToast("Copy failed");
+    }
+  }
+
+  // The /pulls list is still the classic Rails UI: one row per PR with the
+  // title in a.js-navigation-open (id "issue_<n>_link").
+  function ensureListButtons() {
+    if (!isPullsListPage()) {
+      if (document.querySelector(".ghlc-row-btn")) {
+        for (const b of document.querySelectorAll(".ghlc-row-btn")) b.remove();
+      }
+      return;
+    }
+    for (const link of document.querySelectorAll('a.js-navigation-open[id^="issue_"][id$="_link"]')) {
+      if (link.nextElementSibling?.classList?.contains("ghlc-row-btn")) continue;
+      const btn = document.createElement("button");
+      btn.className = "ghlc-btn ghlc-row-btn";
+      btn.type = "button";
+      btn.title = "Copy link with title";
+      btn.setAttribute("aria-label", "Copy link with title");
+      btn.innerHTML = LINK_ICON;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        copyFromRow(link, btn);
+      });
+      link.insertAdjacentElement("afterend", btn);
+    }
+  }
+
   // React re-renders wipe the button and SPA navigations swap the page without
   // a reload — a debounced observer re-injects in both cases.
   let scheduled = false;
@@ -207,10 +261,12 @@
     setTimeout(() => {
       scheduled = false;
       ensureButton();
+      ensureListButtons();
     }, 200);
   }
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   ensureButton();
+  ensureListButtons();
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg?.type === "copy-link") copyLink();

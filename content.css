@@ -31,6 +31,26 @@
   color: var(--fgColor-success, #1a7f37);
 }
 
+/* Row buttons on the /pulls list: hidden until the row is hovered or the
+   button itself is focused. */
+.ghlc-row-btn {
+  width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  opacity: 0;
+}
+
+.ghlc-row-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+div[id^="issue_"]:hover .ghlc-row-btn,
+.ghlc-row-btn:focus-visible,
+.ghlc-row-btn.ghlc-copied {
+  opacity: 1;
+}
+
 .ghlc-toast {
   position: fixed;
   bottom: 24px;
