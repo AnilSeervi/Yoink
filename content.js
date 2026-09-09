@@ -11,9 +11,37 @@
     const m = location.pathname.match(/^\/([^/]+)\/([^/]+)\/(pull|issues)\/(\d+)(?:\/|$)/);
     if (!m) return null;
     return {
+      kind: m[3],
       number: m[4],
       url: `${location.origin}/${m[1]}/${m[2]}/${m[3]}/${m[4]}`,
     };
+  }
+
+  function getBranch() {
+    // React UI: "into <base> from <head>" — links appear in that order, so the
+    // second one is the head branch. Text is "owner:branch" on fork PRs.
+    const refs = document.querySelectorAll('a[data-component="BranchName"]');
+    const el = refs[1] ?? document.querySelector(".commit-ref.head-ref, span.head-ref"); // classic UI
+    const text = el?.textContent.trim();
+    return text ? text.split(":").pop() : null;
+  }
+
+  async function copyBranch() {
+    if (pageInfo()?.kind !== "pull") {
+      showToast("Not a PR page — no branch to copy");
+      return;
+    }
+    const branch = getBranch();
+    if (!branch) {
+      showToast("Couldn't find the branch name");
+      return;
+    }
+    if (await writeClipboard(escHtml(branch), branch)) {
+      showToast(`Copied branch: ${branch}`);
+      flashButton();
+    } else {
+      showToast("Copy failed");
+    }
   }
 
   // Issues and PRs render different header markup; classic selectors kept as
@@ -184,5 +212,6 @@
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg?.type === "copy-link") copyLink();
+    else if (msg?.type === "copy-branch") copyBranch();
   });
 })();

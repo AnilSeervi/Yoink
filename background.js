@@ -1,9 +1,11 @@
+const COMMANDS = new Set(["copy-link", "copy-branch"]);
+
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command !== "copy-link") return;
+  if (!COMMANDS.has(command)) return;
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return;
   try {
-    await chrome.tabs.sendMessage(tab.id, { type: "copy-link" });
+    await chrome.tabs.sendMessage(tab.id, { type: command });
   } catch {
     // No content script in this tab (not a github.com page) — nothing to do.
   }

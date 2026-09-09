@@ -27,6 +27,13 @@
         "mac": "Command+Shift+L"
       },
       "description": "Copy current PR/issue as a link"
+    },
+    "copy-branch": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Copy current PR's branch name"
     }
   }
 }
