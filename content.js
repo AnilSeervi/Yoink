@@ -12,6 +12,7 @@
     if (!m) return null;
     return {
       kind: m[3],
+      repo: m[2],
       number: m[4],
       url: `${location.origin}/${m[1]}/${m[2]}/${m[3]}/${m[4]}`,
     };
@@ -85,7 +86,8 @@
       showToast("Couldn't find the title");
       return;
     }
-    const text = `${title} (#${info.number})`;
+    const { repoPrefix } = await chrome.storage.sync.get({ repoPrefix: false });
+    const text = repoPrefix ? `${info.repo}#${info.number}: ${title}` : `${title} (#${info.number})`;
     const html = `<a href="${escHtml(info.url)}">${escHtml(text)}</a>`;
     const markdown = `[${text.replace(/([[\]])/g, "\\$1")}](${info.url})`;
     if (await writeClipboard(html, markdown)) {
