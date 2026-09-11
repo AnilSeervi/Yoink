@@ -75,6 +75,20 @@
   const escHtml = (s) =>
     s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+  // React UI exposes the state on the header badge as data-status (e.g.
+  // "pullMerged", "issueClosed"); the classic UI badge carries a title attribute.
+  function getStateEmoji() {
+    const state =
+      document.querySelector('span[data-component="StateLabel"]')?.getAttribute("data-status") ??
+      document.querySelector(".gh-header-meta .State, .gh-header .State")?.getAttribute("title") ??
+      "";
+    if (/merged/i.test(state)) return "🟣";
+    if (/draft/i.test(state)) return "📝";
+    if (/closed/i.test(state)) return "🔴";
+    if (/open/i.test(state)) return "🟢";
+    return "";
+  }
+
   async function copyLink() {
     const info = pageInfo();
     if (!info) {
@@ -87,7 +101,9 @@
       return;
     }
     const { repoPrefix } = await chrome.storage.sync.get({ repoPrefix: false });
-    const text = repoPrefix ? `${info.repo}#${info.number}: ${title}` : `${title} (#${info.number})`;
+    const emoji = getStateEmoji();
+    const base = repoPrefix ? `${info.repo}#${info.number}: ${title}` : `${title} (#${info.number})`;
+    const text = `${emoji ? `${emoji} ` : ""}${base}`;
     const html = `<a href="${escHtml(info.url)}">${escHtml(text)}</a>`;
     const markdown = `[${text.replace(/([[\]])/g, "\\$1")}](${info.url})`;
     if (await writeClipboard(html, markdown)) {
