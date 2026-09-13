@@ -1,9 +1,11 @@
-const checkbox = document.getElementById("repoPrefix");
+const DEFAULTS = { repoPrefix: false, stateEmoji: false };
 
-chrome.storage.sync.get({ repoPrefix: false }).then(({ repoPrefix }) => {
-  checkbox.checked = repoPrefix;
-});
-
-checkbox.addEventListener("change", () => {
-  chrome.storage.sync.set({ repoPrefix: checkbox.checked });
+chrome.storage.sync.get(DEFAULTS).then((settings) => {
+  for (const key of Object.keys(DEFAULTS)) {
+    const checkbox = document.getElementById(key);
+    checkbox.checked = settings[key];
+    checkbox.addEventListener("change", () => {
+      chrome.storage.sync.set({ [key]: checkbox.checked });
+    });
+  }
 });

@@ -2,9 +2,9 @@
 
 Chrome extension that copies the current GitHub PR or issue as a rich link:
 
-- **Link text:** `<state emoji> <title> (#<number>)` — e.g. `🟢 Fix login flow (#123)`
+- **Link text:** `<title> (#<number>)` — e.g. `Fix login flow (#123)`
 - **Rich targets** (Slack, Google Docs, Notion): pastes as a clickable link
-- **Plain-text targets** (editors, terminals): pastes as markdown `[🟢 Fix login flow (#123)](https://github.com/org/repo/pull/123)`
+- **Plain-text targets** (editors, terminals): pastes as markdown `[Fix login flow (#123)](https://github.com/org/repo/pull/123)`
 
 Works on both `/pull/...` and `/issues/...` pages (including sub-tabs like _Files changed_) and on the `/pulls` list.
 
@@ -24,9 +24,10 @@ Shortcuts are remappable at `chrome://extensions/shortcuts`. A toast confirms ev
 
 ### Link format
 
-- State emoji prefix: 🟣 merged / 🟢 open / 📝 draft / 🔴 closed
-- Default text: `Fix login flow (#123)`
-- With the **repository prefix** option enabled (right-click the extension icon → Options): `vscode#123: Fix login flow`
+Default text: `Fix login flow (#123)`. Two toggles under right-click the extension icon → Options:
+
+- **Repository prefix:** `vscode#123: Fix login flow`
+- **State emoji:** 🟣 merged / 🟢 open / 📝 draft / 🔴 closed — e.g. `🟣 Fix login flow (#123)`
 
 ## Files
 

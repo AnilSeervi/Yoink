@@ -100,8 +100,8 @@
       showToast("Couldn't find the title");
       return;
     }
-    const { repoPrefix } = await chrome.storage.sync.get({ repoPrefix: false });
-    const emoji = getStateEmoji();
+    const { repoPrefix, stateEmoji } = await chrome.storage.sync.get({ repoPrefix: false, stateEmoji: false });
+    const emoji = stateEmoji ? getStateEmoji() : "";
     const base = repoPrefix ? `${info.repo}#${info.number}: ${title}` : `${title} (#${info.number})`;
     const text = `${emoji ? `${emoji} ` : ""}${base}`;
     const html = `<a href="${escHtml(info.url)}">${escHtml(text)}</a>`;
