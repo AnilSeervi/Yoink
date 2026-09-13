@@ -2,11 +2,11 @@
 
 Chrome extension that copies the current GitHub PR or issue as a rich link:
 
-- **Link text:** `<title> (#<number>)` — e.g. `Fix login flow (#123)`
+- **Link text:** `<state emoji> <title> (#<number>)` — e.g. `🟢 Fix login flow (#123)`
 - **Rich targets** (Slack, Google Docs, Notion): pastes as a clickable link
-- **Plain-text targets** (editors, terminals): pastes as markdown `[Fix login flow (#123)](https://github.com/org/repo/pull/123)`
+- **Plain-text targets** (editors, terminals): pastes as markdown `[🟢 Fix login flow (#123)](https://github.com/org/repo/pull/123)`
 
-Works on both `/pull/...` and `/issues/...` pages, including sub-tabs like _Files changed_.
+Works on both `/pull/...` and `/issues/...` pages (including sub-tabs like _Files changed_) and on the `/pulls` list.
 
 ## Install
 
@@ -16,22 +16,23 @@ Works on both `/pull/...` and `/issues/...` pages, including sub-tabs like _File
 
 ## Use
 
-- Click the small link button next to the PR/issue title, or
-- Press **Cmd+Shift+L** (Mac) / **Ctrl+Shift+L** (Windows/Linux) — remappable at `chrome://extensions/shortcuts`
+- **Copy link:** click the small link button next to the PR/issue title, or press **Cmd+Shift+L** (Mac) / **Ctrl+Shift+L** (Windows/Linux)
+- **Copy branch name:** on a PR, press **Cmd+Shift+K** (Mac) / **Ctrl+Shift+K** (Windows/Linux) — copies the head branch for `git checkout`
+- **From the PR list:** on a repo's `/pulls` page, hover a row and click its copy button — copies that PR's link without opening it
 
-A toast confirms what was copied.
+Shortcuts are remappable at `chrome://extensions/shortcuts`. A toast confirms every copy.
 
-## TODO
+### Link format
 
-- [ ] Copy branch name shortcut (PR head branch, for `git checkout`)
-- [ ] Repo prefix option (`vscode#123: Fix login`)
-- [ ] State emoji in link text (🟣 merged / 🟢 open / 📝 draft / 🔴 closed)
-- [ ] Copy button on `/pulls` list rows
+- State emoji prefix: 🟣 merged / 🟢 open / 📝 draft / 🔴 closed
+- Default text: `Fix login flow (#123)`
+- With the **repository prefix** option enabled (right-click the extension icon → Options): `vscode#123: Fix login flow`
 
 ## Files
 
-- `manifest.json` — Manifest V3 config (`offscreen` + `clipboardWrite` permissions)
-- `background.js` — routes the keyboard shortcut to the active tab, manages the offscreen document
-- `content.js` — title extraction, button injection, clipboard write, toast
+- `manifest.json` — Manifest V3 config (`offscreen`, `clipboardWrite`, `storage` permissions)
+- `background.js` — routes keyboard shortcuts to the active tab, manages the offscreen document
+- `content.js` — title/branch/state extraction, button injection, clipboard write, toast
 - `content.css` — button and toast styles
+- `options.html` / `options.js` — extension options (repository prefix toggle)
 - `offscreen.html` / `offscreen.js` — clipboard fallback for when the page isn't focused (e.g. right after a reload)
