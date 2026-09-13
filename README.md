@@ -10,9 +10,19 @@ Works on both `/pull/...` and `/issues/...` pages, including sub-tabs like _File
 
 ## Install
 
-1. Open `chrome://extensions`
-2. Enable **Developer mode** (top right)
-3. Click **Load unpacked** and select this folder
+Yoink isn't on the Chrome Web Store — install it straight from this repo:
+
+1. Get the code, either way:
+   - `git clone https://github.com/AnilSeervi/Yoink.git`
+   - or **Code → Download ZIP** on the repo page, then unzip
+2. Open `chrome://extensions`
+3. Enable **Developer mode** (top right)
+4. Click **Load unpacked** and select the `Yoink` folder (the one containing `manifest.json`)
+5. Check `chrome://extensions/shortcuts` and bind the two shortcuts if empty — Chrome doesn't always assign suggested keys
+
+Works in any Chromium browser (Edge, Brave, Arc) via the same steps.
+
+**Updating:** `git pull` (or re-download the ZIP into the same folder), then hit ↻ on the extension card at `chrome://extensions` and refresh any open GitHub tabs — old tabs keep the stale content script until refreshed.
 
 ## Use
 
