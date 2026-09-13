@@ -242,8 +242,28 @@
     }
   }
 
-  // The /pulls list is still the classic Rails UI: one row per PR with the
-  // title in a.js-navigation-open (id "issue_<n>_link").
+  // Finds the title link of each row. Classic Rails UI has stable ids; the
+  // React list view's markup churns, so fall back to a structural scan: the
+  // title link is the row's only link whose href is exactly the PR path and
+  // whose text is a real title (not a number/avatar/comment count).
+  function listTitleLinks() {
+    const classic = document.querySelectorAll('a.js-navigation-open[id^="issue_"][id$="_link"]');
+    if (classic.length) return [...classic];
+    const repoPath = location.pathname.replace(/\/pulls\/?$/, "");
+    const prHref = new RegExp(`^${repoPath}/pull/\\d+$`);
+    const links = [];
+    const seen = new Set();
+    for (const a of document.querySelectorAll('a[href]')) {
+      const href = a.getAttribute("href");
+      if (!prHref.test(href) || seen.has(href)) continue;
+      const text = a.textContent.trim();
+      if (!text || /^#?\d+$/.test(text)) continue;
+      seen.add(href);
+      links.push(a);
+    }
+    return links;
+  }
+
   function ensureListButtons() {
     if (!isPullsListPage()) {
       if (document.querySelector(".ghlc-row-btn")) {
@@ -251,7 +271,7 @@
       }
       return;
     }
-    for (const link of document.querySelectorAll('a.js-navigation-open[id^="issue_"][id$="_link"]')) {
+    for (const link of listTitleLinks()) {
       if (link.nextElementSibling?.classList?.contains("ghlc-row-btn")) continue;
       const btn = document.createElement("button");
       btn.className = "ghlc-btn ghlc-row-btn";

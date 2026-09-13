@@ -17,7 +17,7 @@ Works on both `/pull/...` and `/issues/...` pages (including sub-tabs like _File
 ## Use
 
 - **Copy link:** click the small link button next to the PR/issue title, or press **Cmd+Shift+L** (Mac) / **Ctrl+Shift+L** (Windows/Linux)
-- **Copy branch name:** on a PR, press **Cmd+Shift+K** (Mac) / **Ctrl+Shift+K** (Windows/Linux) — copies the head branch for `git checkout`
+- **Copy branch name:** on a PR, press **Cmd+Shift+Y** (Mac) / **Ctrl+Shift+Y** (Windows/Linux) — copies the head branch for `git checkout`
 - **From the PR list:** on a repo's `/pulls` page, hover a row and click its copy button — copies that PR's link without opening it
 
 Shortcuts are remappable at `chrome://extensions/shortcuts`. A toast confirms every copy.

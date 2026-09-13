@@ -31,13 +31,15 @@
   color: var(--fgColor-success, #1a7f37);
 }
 
-/* Row buttons on the /pulls list: hidden until the row is hovered or the
-   button itself is focused. */
+/* Row buttons on the /pulls list. The React list view has no stable row
+   selector to key hover on, so they idle faint and light up on hover/focus
+   (classic rows still get the row-hover treatment). */
 .ghlc-row-btn {
   width: 22px;
   height: 22px;
   margin-left: 4px;
-  opacity: 0;
+  opacity: 0.35;
+  vertical-align: text-bottom;
 }
 
 .ghlc-row-btn svg {
@@ -46,6 +48,7 @@
 }
 
 div[id^="issue_"]:hover .ghlc-row-btn,
+.ghlc-row-btn:hover,
 .ghlc-row-btn:focus-visible,
 .ghlc-row-btn.ghlc-copied {
   opacity: 1;
