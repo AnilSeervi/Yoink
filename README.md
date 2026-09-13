@@ -6,7 +6,7 @@ Chrome extension that copies the current GitHub PR or issue as a rich link:
 - **Rich targets** (Slack, Google Docs, Notion): pastes as a clickable link
 - **Plain-text targets** (editors, terminals): pastes as markdown `[Fix login flow (#123)](https://github.com/org/repo/pull/123)`
 
-Works on both `/pull/...` and `/issues/...` pages (including sub-tabs like _Files changed_) and on the `/pulls` list.
+Works on both `/pull/...` and `/issues/...` pages, including sub-tabs like _Files changed_.
 
 ## Install
 
@@ -18,7 +18,6 @@ Works on both `/pull/...` and `/issues/...` pages (including sub-tabs like _File
 
 - **Copy link:** click the small link button next to the PR/issue title, or press **Cmd+Shift+L** (Mac) / **Ctrl+Shift+L** (Windows/Linux)
 - **Copy branch name:** on a PR, press **Cmd+Shift+Y** (Mac) / **Ctrl+Shift+Y** (Windows/Linux) — copies the head branch for `git checkout`
-- **From the PR list:** on a repo's `/pulls` page, hover a row and click its copy button — copies that PR's link without opening it
 
 Shortcuts are remappable at `chrome://extensions/shortcuts`. A toast confirms every copy.
 
@@ -28,6 +27,10 @@ Default text: `Fix login flow (#123)`. Two toggles under right-click the extensi
 
 - **Repository prefix:** `vscode#123: Fix login flow`
 - **State emoji:** 🟣 merged / 🟢 open / 📝 draft / 🔴 closed — e.g. `🟣 Fix login flow (#123)`
+
+## TODO
+
+- [ ] Copy button on PR list rows — parked until GitHub's new PR list/page rollout settles
 
 ## Files
 

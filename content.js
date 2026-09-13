@@ -214,80 +214,6 @@
     titleEl.insertAdjacentElement("afterend", btn);
   }
 
-  function isPullsListPage() {
-    return /^\/[^/]+\/[^/]+\/pulls\/?$/.test(location.pathname);
-  }
-
-  async function copyFromRow(link, btn) {
-    const title = link.textContent.trim();
-    const num = link.getAttribute("href")?.match(/\/pull\/(\d+)/)?.[1];
-    if (!title || !num) {
-      showToast("Couldn't read this row");
-      return;
-    }
-    const url = new URL(link.getAttribute("href"), location.origin).href;
-    const text = `${title} (#${num})`;
-    const html = `<a href="${escHtml(url)}">${escHtml(text)}</a>`;
-    const markdown = `[${text.replace(/([[\]])/g, "\\$1")}](${url})`;
-    if (await writeClipboard(html, markdown)) {
-      showToast(`Copied: ${text}`);
-      btn.innerHTML = CHECK_ICON;
-      btn.classList.add("ghlc-copied");
-      setTimeout(() => {
-        btn.innerHTML = LINK_ICON;
-        btn.classList.remove("ghlc-copied");
-      }, 1500);
-    } else {
-      showToast("Copy failed");
-    }
-  }
-
-  // Finds the title link of each row. Classic Rails UI has stable ids; the
-  // React list view's markup churns, so fall back to a structural scan: the
-  // title link is the row's only link whose href is exactly the PR path and
-  // whose text is a real title (not a number/avatar/comment count).
-  function listTitleLinks() {
-    const classic = document.querySelectorAll('a.js-navigation-open[id^="issue_"][id$="_link"]');
-    if (classic.length) return [...classic];
-    const repoPath = location.pathname.replace(/\/pulls\/?$/, "");
-    const prHref = new RegExp(`^${repoPath}/pull/\\d+$`);
-    const links = [];
-    const seen = new Set();
-    for (const a of document.querySelectorAll('a[href]')) {
-      const href = a.getAttribute("href");
-      if (!prHref.test(href) || seen.has(href)) continue;
-      const text = a.textContent.trim();
-      if (!text || /^#?\d+$/.test(text)) continue;
-      seen.add(href);
-      links.push(a);
-    }
-    return links;
-  }
-
-  function ensureListButtons() {
-    if (!isPullsListPage()) {
-      if (document.querySelector(".ghlc-row-btn")) {
-        for (const b of document.querySelectorAll(".ghlc-row-btn")) b.remove();
-      }
-      return;
-    }
-    for (const link of listTitleLinks()) {
-      if (link.nextElementSibling?.classList?.contains("ghlc-row-btn")) continue;
-      const btn = document.createElement("button");
-      btn.className = "ghlc-btn ghlc-row-btn";
-      btn.type = "button";
-      btn.title = "Copy link with title";
-      btn.setAttribute("aria-label", "Copy link with title");
-      btn.innerHTML = LINK_ICON;
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        copyFromRow(link, btn);
-      });
-      link.insertAdjacentElement("afterend", btn);
-    }
-  }
-
   // React re-renders wipe the button and SPA navigations swap the page without
   // a reload — a debounced observer re-injects in both cases.
   let scheduled = false;
@@ -297,12 +223,10 @@
     setTimeout(() => {
       scheduled = false;
       ensureButton();
-      ensureListButtons();
     }, 200);
   }
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   ensureButton();
-  ensureListButtons();
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg?.type === "copy-link") copyLink();
